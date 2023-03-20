@@ -72,6 +72,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 builder.Services.AddRazorPages();
+builder.Services.AddCors();
 // Add EntityFramework //
 var DefaultConnection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServer(DefaultConnection));
@@ -110,12 +111,13 @@ builder.Services.AddAuthentication(option =>
     });
 // Mapping data from MailSettings Section to MailSettings class
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
-
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 // Register Custome Services 
 builder.Services.AddScoped<IAuthRepositories,AuthRepositories>();
 builder.Services.AddScoped<IAccountAccess, AccountAccess>();
 builder.Services.AddScoped<IProfileSettingRepositories, ProfileSettingRepositories>();
 builder.Services.AddScoped<IMaillingService, MaillingService>();
+builder.Services.AddScoped<ICloudinaryServices, CloudinaryServices>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -130,6 +132,7 @@ app.UseStaticFiles();
 app.MapRazorPages();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors(c => c.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
 
 app.MapControllers();
 

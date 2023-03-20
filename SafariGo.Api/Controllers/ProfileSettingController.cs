@@ -48,6 +48,48 @@ namespace SafariGo.Api.Controllers
             return result.Status ? Ok(result) : BadRequest(result);
         }
 
+       
+
+        [HttpPut("uploadProfilePic")]
+
+        public async Task<IActionResult> UploadProfilePic(IFormFile file)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _profile.UploadProfilePicAsync(userId, file);
+            return result.Status ? Ok(result) : BadRequest(result);
+
+        }
+
+        [HttpDelete("DeleteProfilePic")]
+
+        public async Task<IActionResult> DeleteProfilePic()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _profile.DeleteProfilePicAsync(userId);
+            return result.Status ? Ok(result) : BadRequest(result);
+
+        }
+
+
+        [HttpPut("uploadCoverPic")]
+
+        public async Task<IActionResult> UploadCoverPic(IFormFile file)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _profile.UploadCoverPicAsync(userId, file);
+            return result.Status ? Ok(result) : BadRequest(result);
+
+        }
+
+        [HttpDelete("DeleteCoverPic")]
+
+        public async Task<IActionResult> DeleteCoverPic()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _profile.DeleteCoverPicAsync(userId);
+            return result.Status ? Ok(result) : BadRequest(result);
+
+        }
 
 
     }
