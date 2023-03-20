@@ -5,8 +5,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SafariGo.Core.Configure_Services;
+using SafariGo.Core.Dto.Response;
 using SafariGo.Core.Models;
+using SafariGo.Core.Repositories;
+using SafariGo.Core.Services;
 using SafariGo.DataAccess;
+using SafariGo.DataAccess.Repositories;
+using SafariGo.DataAccess.Services;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -66,7 +71,7 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
-
+builder.Services.AddRazorPages();
 // Add EntityFramework //
 var DefaultConnection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServer(DefaultConnection));
@@ -103,6 +108,14 @@ builder.Services.AddAuthentication(option =>
         };
 
     });
+// Mapping data from MailSettings Section to MailSettings class
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+
+// Register Custome Services 
+builder.Services.AddScoped<IAuthRepositories,AuthRepositories>();
+builder.Services.AddScoped<IAccountAccess, AccountAccess>();
+builder.Services.AddScoped<IProfileSettingRepositories, ProfileSettingRepositories>();
+builder.Services.AddScoped<IMaillingService, MaillingService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -113,7 +126,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseStaticFiles();
+app.MapRazorPages();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
