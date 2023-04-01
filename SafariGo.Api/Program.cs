@@ -116,6 +116,8 @@ builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection(
 builder.Services.AddScoped<IAuthRepositories,AuthRepositories>();
 builder.Services.AddScoped<IAccountAccess, AccountAccess>();
 builder.Services.AddScoped<IProfileSettingRepositories, ProfileSettingRepositories>();
+builder.Services.AddScoped<ICategoryRepositories, CategoryRepositories>();
+builder.Services.AddScoped<ICategoryItemRepositories, CategoryItemRepositories>();
 builder.Services.AddScoped<IMaillingService, MaillingService>();
 builder.Services.AddScoped<ICloudinaryServices, CloudinaryServices>();
 var app = builder.Build();
@@ -126,6 +128,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

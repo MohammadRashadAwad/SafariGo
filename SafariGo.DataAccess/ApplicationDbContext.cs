@@ -27,8 +27,10 @@ namespace SafariGo.DataAccess
             builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims","Identity");
             builder.Entity<IdentityUserLogin<string>>().ToTable("UserLogin","Identity");
             builder.Entity<IdentityUserToken<string>>().ToTable("UserToken","Identity");
-
+            
             
         }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<CategoryItem> CategoryItems { get; set; }
     }
 }

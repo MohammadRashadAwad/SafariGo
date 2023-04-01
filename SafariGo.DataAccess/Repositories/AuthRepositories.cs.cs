@@ -96,7 +96,7 @@ namespace SafariGo.DataAccess.Repositories
         {
             // check the email is not exists in Database
             if (await _userManager.FindByEmailAsync(request.Email) != null)
-                return new AuthResponse { Errors = new { Eamil = "Someone already has this email address. Try another email" } };
+                return new AuthResponse { Errors = new { Email = "Someone already has this email address. Try another email" } };
             // check the phone is not exists in Database
             if (await _userManager.FindByNameAsync(request.Phone) != null)
                 return new AuthResponse { Errors = new { Phone = "Someone already has this phone number. Try another phone number" } };
