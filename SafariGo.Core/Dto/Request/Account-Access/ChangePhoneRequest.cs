@@ -11,6 +11,7 @@ namespace SafariGo.Core.Dto.Request
     {
         [RegularExpression(@"^07[789]\d{7}$", ErrorMessage = "Invalid phone number")]
         public string PhoneNumber { get; set; }
+        [Required]
         public string Password { get; set; }
     }
 }

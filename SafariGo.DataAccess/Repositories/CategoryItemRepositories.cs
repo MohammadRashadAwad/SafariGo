@@ -23,62 +23,62 @@ namespace SafariGo.DataAccess.Repositories
             _cloudinaryServices = cloudinaryServices;
         }
 
-        public async Task<CategoryResponse> AddCategoryItem(CategoryItemRequest request)
+        public async Task<BaseResponse> AddCategoryItem(CategoryItemRequest request)
         {
             if (await _context.Categories.FindAsync(request.CategoryId) is null)
-                return new CategoryResponse { Error = new { Category = "There is no category" } };
+                return new BaseResponse { Errors = new { Category = "There is no category" } };
             var upload = await _cloudinaryServices.UploadAsync(request.Cover);
             if (!upload.Status)
-                return new CategoryResponse { Error = new { Cover = upload.Message } };
+                return new BaseResponse { Errors = new { Cover = upload.Message } };
             var categoryItem = new CategoryItem
             {
                 Title = request.Title,
                 Description = request.Description,
-                Cover = upload.Url,
+                Cover = upload.Data.ToString(),
                 CategoryId = request.CategoryId,
 
             };
             await _context.CategoryItems.AddAsync(categoryItem);
             _context.SaveChanges();
-            return new CategoryResponse { Status = true, Message = "Success category added" };
+            return new BaseResponse { Status = true, Message = "Success category added" };
         }
 
-        public async Task<CategoryResponse> DeleteCategoryItem(string id)
+        public async Task<BaseResponse> DeleteCategoryItem(string id)
         {
             var categoryItem = await _context.CategoryItems.FindAsync(id);
             if (categoryItem is null)
-                return new CategoryResponse { Error = new { CategoryItem = "There is nothing Category Item about this Id" } };
+                return new BaseResponse { Errors = new { CategoryItem = "There is nothing Category Item about this Id" } };
             _context.CategoryItems.Remove(categoryItem);
             _context.SaveChanges();
             await _cloudinaryServices.DeleteResorceAsync(categoryItem.Cover);
-            return new CategoryResponse { Status = true, Message = "This category Item has been successfully deleted" };
+            return new BaseResponse { Status = true, Message = "This category Item has been successfully deleted" };
         }
 
-        public async Task<CategoryResponse> GetAllCategoryItem()
+        public async Task<BaseResponse> GetAllCategoryItem()
         {
-            var result = await _context.CategoryItems.ToListAsync();
-            return new CategoryResponse { Status = true, Data = result };
+            var result = await _context.CategoryItems.Select(ci=>new {ci.Id,ci.Title,ci.Description,ci.Cover,ci.CreateAt}).ToListAsync();
+            return new BaseResponse { Status = true, Data = result };
         }
 
-        public async Task<CategoryResponse> UpdateCategoryItem(string id, CategoryItemRequest request)
+        public async Task<BaseResponse> UpdateCategoryItem(string id, CategoryItemRequest request)
         {
             var categoryItem = await _context.CategoryItems.FindAsync(id);
             if (categoryItem is null)
-                return new CategoryResponse { Error = new { CategoryItem = "There is nothing Category Item about this Id" } };
+                return new BaseResponse { Errors = new { CategoryItem = "There is nothing Category Item about this Id" } };
 
             if (await _context.Categories.FindAsync(request.CategoryId) is null)
-                return new CategoryResponse { Error = new { Category = "There is no category" } };
+                return new BaseResponse { Errors = new { Category = "There is no category" } };
 
             var update = await _cloudinaryServices.UpdateAsync(categoryItem.Cover,request.Cover);
             if (!update.Status)
-                return new CategoryResponse { Error = new { Cover = update.Message } };
+                return new BaseResponse { Errors = new { Cover = update.Message } };
             
             categoryItem.Title = request.Title;
             categoryItem.Description = request.Description;
-            categoryItem.Cover = update.Url;
+            categoryItem.Cover = update.Data.ToString();
             categoryItem.CategoryId = request.CategoryId;
             _context.SaveChanges();
-            return new CategoryResponse { Status = true, Message = "The category item has been updated successfully" };
+            return new BaseResponse { Status = true, Message = "The category item has been updated successfully" };
            
         }
     }

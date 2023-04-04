@@ -13,12 +13,14 @@ using SafariGo.DataAccess;
 using SafariGo.DataAccess.Repositories;
 using SafariGo.DataAccess.Services;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(x =>x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -26,7 +28,7 @@ builder.Services.AddSwaggerGen(options =>
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
-        Title = "Safari Go",
+        Title = "See Jordan",
         Description = "My first api",
         TermsOfService = new Uri("https://www.google.com"),
         Contact = new OpenApiContact
@@ -78,7 +80,7 @@ var DefaultConnection = builder.Configuration.GetConnectionString("DefaultConnec
 builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServer(DefaultConnection));
 
 // Add Identity //
-builder.Services.AddIdentity<ApplicationUser,IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
 // Add Jwt //
 // Mapping data from JWT Section to JWT class
@@ -113,7 +115,7 @@ builder.Services.AddAuthentication(option =>
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 // Register Custome Services 
-builder.Services.AddScoped<IAuthRepositories,AuthRepositories>();
+builder.Services.AddScoped<IAuthRepositories, AuthRepositories>();
 builder.Services.AddScoped<IAccountAccess, AccountAccess>();
 builder.Services.AddScoped<IProfileSettingRepositories, ProfileSettingRepositories>();
 builder.Services.AddScoped<ICategoryRepositories, CategoryRepositories>();

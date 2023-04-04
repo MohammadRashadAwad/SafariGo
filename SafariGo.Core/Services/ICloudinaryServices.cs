@@ -10,9 +10,9 @@ namespace SafariGo.Core.Services
 {
     public interface ICloudinaryServices
     {
-        Task<CloudinaryServiceResponse> UploadAsync(IFormFile file);
+        Task<BaseResponse> UploadAsync(IFormFile file);
        
-        Task<CloudinaryServiceResponse> DeleteResorceAsync(string url);
-        Task<CloudinaryServiceResponse> UpdateAsync(string url, IFormFile file);
+        Task<BaseResponse> DeleteResorceAsync(string url);
+        Task<BaseResponse> UpdateAsync(string url, IFormFile file);
     }
 }

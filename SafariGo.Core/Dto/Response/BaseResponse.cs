@@ -9,7 +9,7 @@ namespace SafariGo.Core.Dto.Response
     public class BaseResponse
     {
         public bool Status { get; set; }
-        public object Error { get; set; }
+        public object Errors { get; set; }
         public object Data { get; set; }
         public string Message { get; set; }
     }

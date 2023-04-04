@@ -19,10 +19,9 @@ namespace SafariGo.Api.Controllers
         }
         [Authorize]
         [HttpPost("changeEmail")]
-        public async Task<IActionResult> ChangeEmailAsync(ChangeEmailRequest request)
+        public async Task<IActionResult> ChangeEmailAsync([FromBody]ChangeEmailRequest request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var result = await _account.ChangeEmailAsync(userId,request);
 
@@ -31,17 +30,15 @@ namespace SafariGo.Api.Controllers
         [HttpGet("confirmEmailChange")]
         public async Task<IActionResult> ConfirmEmailChange([FromQuery]ConfirmChangeEmailRequest request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+           
             var result = await _account.ConfirmChangeEmail(request);
             return result.Status ? Ok(result): BadRequest(result);
         }
         [Authorize]
         [HttpPost("changePassword")]
-        public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
+        public async Task<IActionResult> ChangePassword([FromBody]ChangePasswordRequest request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+          
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var result =await _account.ChangePasswordAsync(userId,request);
             return result.Status ? Ok(result) : BadRequest(result);
@@ -50,10 +47,9 @@ namespace SafariGo.Api.Controllers
 
         [Authorize]
         [HttpPost("changePhone")]
-        public async Task<IActionResult> ChangePhoneNumberAsync(ChangePhoneRequest request)
+        public async Task<IActionResult> ChangePhoneNumberAsync([FromBody]ChangePhoneRequest request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+           
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var result = await _account.ChangePhoneNumberAsync(userId, request);
             return result.Status ? Ok(result) : BadRequest(result);

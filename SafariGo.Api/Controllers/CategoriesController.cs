@@ -32,26 +32,26 @@ namespace SafariGo.Api.Controllers
 
         [HttpPost("addCategory")]
         [Authorize(Roles ="Admin")]
-        public async Task<IActionResult> AddCategoryAsync(CategoryRequest request)
+        public async Task<IActionResult> AddCategoryAsync([FromBody]CategoryRequest request)
         {
             var result = await _category.AddCategory(request);
             return result.Status ? Ok(result) : BadRequest(result);
         }
 
-        [HttpDelete("deleteCategory")]
+        [HttpDelete("deleteCategory/{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteCategoryAsync(string Id)
+        public async Task<IActionResult> DeleteCategoryAsync(string id)
         {
-            var result = await _category.DeleteCategory(Id);
+            var result = await _category.DeleteCategory(id);
 
             return result.Status ? Ok(result) : BadRequest(result);
         }
 
-        [HttpPut("updateCategory")]
+        [HttpPut("updateCategory/{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateCategoryAsync(string Id, CategoryRequest request)
+        public async Task<IActionResult> UpdateCategoryAsync(string id, [FromBody]CategoryRequest request)
         {
-            var result = await _category.UpdateCategory(Id, request);
+            var result = await _category.UpdateCategory(id, request);
 
             return result.Status ? Ok(result) : BadRequest(result);
         }

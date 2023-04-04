@@ -9,13 +9,14 @@ using SafariGo.Core.Repositories;
 using SafariGo.Core.Services;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SafariGo.DataAccess.Repositories
 {
-    public class ProfileSettingRepositories :IProfileSettingRepositories
+    public class ProfileSettingRepositories : IProfileSettingRepositories
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ICloudinaryServices _cloudinary;
@@ -26,77 +27,67 @@ namespace SafariGo.DataAccess.Repositories
             _cloudinary = cloudinary;
         }
 
-        public async Task<ProfileSettingResponse> DeleteCoverPicAsync(string userId)
+        public async Task<BaseResponse> DeletePictureAsync(string userId, string pictureType)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
-                return new ProfileSettingResponse { Errors = new { UserId = "Invalid user id" } };
-
-            var delete = await _cloudinary.DeleteResorceAsync(user.CoverPic);
+                return new BaseResponse { Errors = new { UserId = "Invalid user id" } };
+            var pictureUrl = string.Empty;
+            if (pictureType == "cover")
+                pictureUrl = user.CoverPic;
+            else if (pictureType == "profile")
+                pictureUrl = user.ProfilePic;
+            var delete = await _cloudinary.DeleteResorceAsync(pictureUrl);
             if (!delete.Status)
-                return new ProfileSettingResponse { Errors = new { Image = delete.Message } };
-            user.CoverPic = null;
+                return new BaseResponse { Errors = new { Image = delete.Message } };
+            if (pictureType == "cover")
+                user.CoverPic = null;
+            else if (pictureType == "profile")
+                user.ProfilePic = null;
             await _userManager.UpdateAsync(user);
-            return new ProfileSettingResponse
+            return new BaseResponse
             {
                 Status = true,
                 Message = delete.Message
             };
         }
 
-        public async Task<ProfileSettingResponse> DeleteProfilePicAsync(string userId)
+
+        public async Task<BaseResponse> RemoveBioAsync(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
-                return new ProfileSettingResponse { Errors = new { UserId = "Invalid user id" } };
-
-            var delete = await _cloudinary.DeleteResorceAsync(user.ProfilePic);
-            if (!delete.Status)
-                return new ProfileSettingResponse { Errors = new { Image = delete.Message } };
-             user.ProfilePic = null ;
-            await _userManager.UpdateAsync(user);
-            return new ProfileSettingResponse
-            {
-                Status = true,
-                Message = delete.Message
-            };
-        }
-
-        public async Task<ProfileSettingResponse> RemoveBioAsync(string userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-                return new ProfileSettingResponse { Errors = new { UserId = "Invalid user id" } };
+                return new BaseResponse { Errors = new { UserId = "Invalid user id" } };
             user.Bio = null;
             await _userManager.UpdateAsync(user);
-            return new ProfileSettingResponse { Status = true, Data = new { Bio = user.Bio }, Message = "Bio Removed successfully" };
+            return new BaseResponse { Status = true, Data = new { Bio = user.Bio }, Message = "Bio Removed successfully" };
         }
 
-        public async Task<ProfileSettingResponse> UpdateBioAsync(string userId, UpdateBioRequest request)
+        public async Task<BaseResponse> UpdateBioAsync(string userId, UpdateBioRequest request)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
-                return new ProfileSettingResponse { Errors = new { UserId = "Invalid user id" } };
+                return new BaseResponse { Errors = new { UserId = "Invalid user id" } };
             user.Bio = request.Bio;
             await _userManager.UpdateAsync(user);
-            return new ProfileSettingResponse { Status = true, Data = new { Bio = user.Bio }, Message = "Bio updated successfully" };
+            return new BaseResponse { Status = true, Data = new { Bio = user.Bio }, Message = "Bio updated successfully" };
         }
 
-        public async Task<ProfileSettingResponse> UpdateNameAsync(string userId, UpdateNameRequest request)
+        public async Task<BaseResponse> UpdateNameAsync(string userId, UpdateNameRequest request)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
-                return new ProfileSettingResponse { Errors = new { UserId = "Invalid user id" } };
+                return new BaseResponse { Errors = new { UserId = "Invalid user id" } };
 
             if (!await _userManager.CheckPasswordAsync(user, request.Password))
-                return new ProfileSettingResponse { Errors = new { Password = "Wrong password" } };
+                return new BaseResponse { Errors = new { Password = "Wrong password" } };
             if (!string.IsNullOrEmpty(request.FirstName))
                 user.FirstName = request.FirstName;
             if (!string.IsNullOrEmpty(request.LastName))
                 user.LastName = request.LastName;
             await _userManager.UpdateAsync(user);
 
-            return new ProfileSettingResponse
+            return new BaseResponse
             {
                 Status = true,
                 Data = new { Firstname = user.FirstName, Lastname = user.LastName },
@@ -105,67 +96,49 @@ namespace SafariGo.DataAccess.Repositories
 
         }
 
-        public async Task<ProfileSettingResponse> UploadCoverPicAsync(string userId, IFormFile file)
+
+
+
+
+        public async Task<BaseResponse> UploadPictureAsync(string userId, IFormFile file, string pictureType)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
-                return new ProfileSettingResponse { Errors = new { UserId = "Invalid user id" } };
-
-            if (string.IsNullOrEmpty(user.CoverPic))
             {
-                var upload = await _cloudinary.UploadAsync(file);
-                if (!upload.Status)
-                    return new ProfileSettingResponse { Errors = new { Image = upload.Message } };
-                user.CoverPic = upload.Url;
-                await _userManager.UpdateAsync(user);
+                return new BaseResponse { Errors = new { UserId = "Invalid user id" } };
             }
-            else
-            {
-                var update = await _cloudinary.UpdateAsync(user.CoverPic, file);
-                if (!update.Status)
-                    return new ProfileSettingResponse { Errors = new { Image = update.Message } };
-                user.CoverPic = update.Url;
-                await _userManager.UpdateAsync(user);
 
+            var pictureProperty = pictureType == "profile" ? user.ProfilePic : user.CoverPic;
+            var uploadResult = string.IsNullOrEmpty(pictureProperty)
+                ? await _cloudinary.UploadAsync(file)
+                : await _cloudinary.UpdateAsync(pictureProperty, file);
+
+            if (!uploadResult.Status)
+            {
+                return new BaseResponse { Errors = new { Image = uploadResult.Message } };
             }
-            return new ProfileSettingResponse
+
+            if (pictureType == "profile")
+            {
+                user.ProfilePic = uploadResult.Data.ToString();
+            }
+            else if (pictureType == "cover")
+            {
+                user.CoverPic = uploadResult.Data.ToString();
+            }
+
+            await _userManager.UpdateAsync(user);
+
+            return new BaseResponse
             {
                 Status = true,
                 Message = "The image has been uploaded successfully",
-                Data = new { ProfilePic = user.CoverPic }
+                Data = new { Picture = uploadResult.Data.ToString() }
             };
         }
-    
 
-        public async Task<ProfileSettingResponse> UploadProfilePicAsync(string userId, IFormFile file)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-                return new ProfileSettingResponse { Errors = new { UserId = "Invalid user id" } };
 
-            if (string.IsNullOrEmpty(user.ProfilePic))
-            {
-                var upload = await _cloudinary.UploadAsync(file);
-                if (!upload.Status)
-                    return new ProfileSettingResponse { Errors = new { Image = upload.Message } };
-                user.ProfilePic = upload.Url;
-                await _userManager.UpdateAsync(user);
-            }
-            else
-            {
-                var update = await _cloudinary.UpdateAsync(user.ProfilePic, file);
-                if (!update.Status)
-                    return new ProfileSettingResponse { Errors = new { Image = update.Message } };
-                user.ProfilePic = update.Url;
-                await _userManager.UpdateAsync(user);
 
-            }
-            return new ProfileSettingResponse
-            {
-                Status = true,
-                Message = "The image has been uploaded successfully",
-                Data =  new { ProfilePic = user.ProfilePic } 
-            };
-        }
+
     }
 }

@@ -10,10 +10,10 @@ namespace SafariGo.Core.Repositories
 {
     public interface ICategoryRepositories
     {
-        Task<CategoryResponse> GetAllCategory();
-        Task<CategoryResponse> AddCategory(CategoryRequest request);
-        Task<CategoryResponse> DeleteCategory(string Id);
-        Task<CategoryResponse> UpdateCategory(string Id ,CategoryRequest request);
+        Task<BaseResponse> GetAllCategory();
+        Task<BaseResponse> AddCategory(CategoryRequest request);
+        Task<BaseResponse> DeleteCategory(string Id);
+        Task<BaseResponse> UpdateCategory(string Id ,CategoryRequest request);
 
     }
 }

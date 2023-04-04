@@ -22,10 +22,9 @@ namespace SafariGo.Api.Controllers
 
         [HttpPut("updateName")]
 
-        public async Task<IActionResult> UpdateNameAsync(UpdateNameRequest request)
+        public async Task<IActionResult> UpdateNameAsync([FromBody]UpdateNameRequest request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+           
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var result = await _profile.UpdateNameAsync(userId,request);
             return result.Status ? Ok(result) : BadRequest(result);
@@ -33,8 +32,6 @@ namespace SafariGo.Api.Controllers
         [HttpPut("updateBio")]
         public async Task<IActionResult> UpdateBioAsync(UpdateBioRequest request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var result = await _profile.UpdateBioAsync(userId, request);
             return result.Status ? Ok(result) : BadRequest(result);
@@ -55,7 +52,7 @@ namespace SafariGo.Api.Controllers
         public async Task<IActionResult> UploadProfilePic(IFormFile file)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var result = await _profile.UploadProfilePicAsync(userId, file);
+            var result = await _profile.UploadPictureAsync(userId, file, "profile");
             return result.Status ? Ok(result) : BadRequest(result);
 
         }
@@ -65,7 +62,7 @@ namespace SafariGo.Api.Controllers
         public async Task<IActionResult> DeleteProfilePic()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var result = await _profile.DeleteProfilePicAsync(userId);
+            var result = await _profile.DeletePictureAsync(userId, "profile");
             return result.Status ? Ok(result) : BadRequest(result);
 
         }
@@ -76,7 +73,7 @@ namespace SafariGo.Api.Controllers
         public async Task<IActionResult> UploadCoverPic(IFormFile file)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var result = await _profile.UploadCoverPicAsync(userId, file);
+            var result = await _profile.UploadPictureAsync(userId, file, "cover");
             return result.Status ? Ok(result) : BadRequest(result);
 
         }
@@ -86,7 +83,7 @@ namespace SafariGo.Api.Controllers
         public async Task<IActionResult> DeleteCoverPic()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var result = await _profile.DeleteCoverPicAsync(userId);
+            var result = await _profile.DeletePictureAsync(userId, "cover");
             return result.Status ? Ok(result) : BadRequest(result);
 
         }

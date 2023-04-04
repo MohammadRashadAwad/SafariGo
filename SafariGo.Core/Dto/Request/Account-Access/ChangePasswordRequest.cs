@@ -9,7 +9,9 @@ namespace SafariGo.Core.Dto.Request
 {
     public class ChangePasswordRequest
     {
+        [Required]
         public string CurrentPassword { get; set; }
+        [Required]
         public string NewPassword { get; set; }
         [Compare("NewPassword")]
         public string ConfirmNewPassword { get; set; }

@@ -10,10 +10,10 @@ namespace SafariGo.Core.Repositories
 {
     public interface IAuthRepositories
     {
-        Task<AuthResponse> RegisterAsync(RegisterRequest request);
-        Task<AuthResponse> LoginAsync(LoginRequest request);
-        Task<AuthResponse> ConfirmEmail(ConfirmEmailRequest request);
-        Task<AuthResponse> ForgetPassword(string email);
-        Task<AuthResponse> ResetPassword(ResetPasswordRequest request);
+        Task<BaseResponse> RegisterAsync(RegisterRequest request);
+        Task<BaseResponse> LoginAsync(LoginRequest request);
+        Task<BaseResponse> ConfirmEmail(ConfirmEmailRequest request);
+        Task<BaseResponse> ForgetPassword(string email);
+        Task<BaseResponse> ResetPassword(ResetPasswordRequest request);
     }
 }

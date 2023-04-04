@@ -38,68 +38,71 @@ namespace SafariGo.DataAccess.Repositories
             _maillingService = maillingService;
         }
 
-        public async Task<AuthResponse> ConfirmEmail(ConfirmEmailRequest request)
+        public async Task<BaseResponse> ConfirmEmail(ConfirmEmailRequest request)
         {
             var user = await _userManager.FindByIdAsync(request.UserId);
             if (user == null)
-                return new AuthResponse { Errors = new { UserId = "Invalid User Id " } };
+                return new BaseResponse { Errors = new { UserId = "Invalid User Id " } };
             var decoded = WebEncoders.Base64UrlDecode(request.Token);
             var token = Encoding.UTF8.GetString(decoded);
             var result = await _userManager.ConfirmEmailAsync(user, token);
             if (!result.Succeeded)
-                return new AuthResponse { Errors = new { confirm = result.Errors.Select(e => e.Description) } };
-            return new AuthResponse { Status = true };
+                return new BaseResponse { Errors = new { confirm = result.Errors.Select(e => e.Description) } };
+            return new BaseResponse { Status = true };
 
         }
 
-        public async Task<AuthResponse> ForgetPassword(string email)
+        public async Task<BaseResponse> ForgetPassword(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
-                return new AuthResponse { Errors = new { Email = "There is no user associated with this e-mail" } };
+                return new BaseResponse { Errors = new { Email = "There is no user associated with this e-mail" } };
            var GenerateResetPasswordToken= await _userManager.GeneratePasswordResetTokenAsync(user);
             var encoding = Encoding.UTF8.GetBytes(GenerateResetPasswordToken);
             var validToken = WebEncoders.Base64UrlEncode(encoding);
             var url = $"{_configuration["AppUrl"]}/ResetPassword?email={user.Email}&token={validToken}";
             await _maillingService.ResetPasswordAsync(user.Email,user.FirstName,url);
             
-            return new AuthResponse { Status = true };
+            return new BaseResponse { Status = true ,Message= "Check your email" };
         }
 
-        public async Task<AuthResponse> LoginAsync(LoginRequest request)
+        public async Task<BaseResponse> LoginAsync(LoginRequest request)
         {
             // check username Associated with user
             var user = new EmailAddressAttribute().IsValid(request.Username) ?
                 await _userManager.FindByEmailAsync(request.Username) :
                 await _userManager.FindByNameAsync(request.Username);
             if (user == null)
-                return new AuthResponse { Errors = new { Username = "We couldn't find an account with this email or phone number. " } };
+                return new BaseResponse { Errors = new { Username = "We couldn't find an account with this email or phone number. " } };
             if (!user.EmailConfirmed)
-                return new AuthResponse { Errors = new { Username = "Please verify your email before logging in" } };
+                return new BaseResponse { Errors = new { Username = "Please verify your email before logging in" } };
             if (!await _userManager.CheckPasswordAsync(user, request.Password))
-                return new AuthResponse { Errors = new { Password = "Invalid Username or Password" } };
-            return new AuthResponse
+                return new BaseResponse { Errors = new { Password = "Invalid Username or Password" } };
+            return new BaseResponse
             {
                 Status = true,
-                Data = new Data
+                Data = new 
                 {
                     IsAdmin = await _userManager.IsInRoleAsync(user, "Admin"),
                     Token = new JwtSecurityTokenHandler().WriteToken(await CreateAccessToken(user)),
-                    UserId = user.Id
+                    UserId = user.Id,
+                    Name =$"{user.FirstName} {user.LastName}",
+                    Email=user.Email,
+                    ProfilePic = user.ProfilePic
                 },
                 Errors = null
             };
 
         }
 
-        public async Task<AuthResponse> RegisterAsync(RegisterRequest request)
+        public async Task<BaseResponse> RegisterAsync(RegisterRequest request)
         {
             // check the email is not exists in Database
             if (await _userManager.FindByEmailAsync(request.Email) != null)
-                return new AuthResponse { Errors = new { Email = "Someone already has this email address. Try another email" } };
+                return new BaseResponse { Errors = new { Email = "Someone already has this email address. Try another email" } };
             // check the phone is not exists in Database
             if (await _userManager.FindByNameAsync(request.Phone) != null)
-                return new AuthResponse { Errors = new { Phone = "Someone already has this phone number. Try another phone number" } };
+                return new BaseResponse { Errors = new { Phone = "Someone already has this phone number. Try another phone number" } };
             var user = new ApplicationUser
             {
                 FirstName = request.FirstName,
@@ -110,7 +113,7 @@ namespace SafariGo.DataAccess.Repositories
             };
             var result = await _userManager.CreateAsync(user, request.Password);
             if (!result.Succeeded)
-                return new AuthResponse { Errors = new { Password = result.Errors.Select(e => e.Description) } };
+                return new BaseResponse { Errors = new { Password = result.Errors.Select(e => e.Description) } };
 
             await _userManager.AddToRoleAsync(user, "User");
             // Generate Token to confirm email 
@@ -120,10 +123,10 @@ namespace SafariGo.DataAccess.Repositories
             var validToken = WebEncoders.Base64UrlEncode(encodedToken);
             var url = $"{_configuration["AppUrl"]}/api/Authentication/confirmEmail?userId={user.Id}&token={validToken}";
             await _maillingService.ConfirmEamilAsync(user.Email, user.FirstName, url);
-            return new AuthResponse
+            return new BaseResponse
             {
                 Status = true,
-                Data = new Data
+                Data = new 
                 {
                     Token = new JwtSecurityTokenHandler().WriteToken(await CreateAccessToken(user)),
                     UserId = user.Id,
@@ -137,17 +140,17 @@ namespace SafariGo.DataAccess.Repositories
 
         }
 
-        public async Task<AuthResponse> ResetPassword(ResetPasswordRequest request)
+        public async Task<BaseResponse> ResetPassword(ResetPasswordRequest request)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null)
-                return new AuthResponse { Errors = new { Email = "There is no user associated with this e-mail" } };
+                return new BaseResponse { Errors = new { Email = "There is no user associated with this e-mail" } };
             var decoded = WebEncoders.Base64UrlDecode(request.Token);
             var validToken = Encoding.UTF8.GetString(decoded);
             var result = await _userManager.ResetPasswordAsync(user, validToken, request.Password);
             if (!result.Succeeded)
-                return new AuthResponse { Errors = new { Password = result.Errors.Select(e => e.Description) } };
-            return new AuthResponse { Status = true };
+                return new BaseResponse { Errors = new { Password = result.Errors.Select(e => e.Description) } };
+            return new BaseResponse { Status = true ,Message= "The password has been changed successfully" };
 
             
         }

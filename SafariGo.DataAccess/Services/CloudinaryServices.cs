@@ -28,51 +28,51 @@ namespace SafariGo.DataAccess.Services
 
         }
 
-        public async Task<CloudinaryServiceResponse> DeleteResorceAsync(string url)
+        public async Task<BaseResponse> DeleteResorceAsync(string url)
         {
             if (string.IsNullOrEmpty(url))
-                return new CloudinaryServiceResponse { Message = "The URL is Null or Empty" };
+                return new BaseResponse { Message = "The URL is Null or Empty" };
             var deleteResult = await _cloudinary.DeleteResourcesAsync(url.ExtractPublicIdOfImage());
-            return new CloudinaryServiceResponse { Status = true, Message = "The image has been deleted successfully" };
+            return new BaseResponse { Status = true, Message = "The image has been deleted successfully" };
 
         }
 
-        public async Task<CloudinaryServiceResponse> UpdateAsync(string url, IFormFile file)
+        public async Task<BaseResponse> UpdateAsync(string url, IFormFile file)
         {
             var delete = await DeleteResorceAsync(url);
             if (!delete.Status)
-                return new CloudinaryServiceResponse { Message = delete.Message };
+                return new BaseResponse { Message = delete.Message };
             var upload = await UploadAsync(file);
             if (!upload.Status)
-                return new CloudinaryServiceResponse { Message = upload.Message };
+                return new BaseResponse { Message = upload.Message };
 
-            return new CloudinaryServiceResponse
+            return new BaseResponse
             {
                 Status = true,
                 Message = "The image has been updated successfully",
-                Url = upload.Url
+                Data = upload.Data
             };
         }
 
-        public async Task<CloudinaryServiceResponse> UploadAsync(IFormFile file)
+        public async Task<BaseResponse> UploadAsync(IFormFile file)
         {
             if (file.Length == 0 || file == null)
-                return new CloudinaryServiceResponse { Message = "The File is requerd" };
+                return new BaseResponse { Message = "The File is requerd" };
 
 
             if (!file.ContentType.StartsWith("image/"))
-                return new CloudinaryServiceResponse { Message = "We do not support this type of file" };
+                return new BaseResponse { Message = "We do not support this type of file" };
 
             var uploadParams = new ImageUploadParams
             {
                 File = new FileDescription(file.FileName, file.OpenReadStream())
             };
             var uploadResult = await _cloudinary.UploadAsync(uploadParams);
-            return new CloudinaryServiceResponse
+            return new BaseResponse
             {
                 Status = true,
                 Message = "The image has been uploaded successfully",
-                Url = uploadResult.SecureUrl.ToString()
+                Data = uploadResult.SecureUrl.ToString()
             };
 
         }

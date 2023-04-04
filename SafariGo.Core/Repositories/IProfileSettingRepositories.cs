@@ -12,13 +12,11 @@ namespace SafariGo.Core.Repositories
 {
     public interface IProfileSettingRepositories
     {
-        Task<ProfileSettingResponse> UpdateNameAsync(string userId,UpdateNameRequest request);
-        Task<ProfileSettingResponse> UpdateBioAsync(string userId,UpdateBioRequest request);
-        Task<ProfileSettingResponse> RemoveBioAsync(string userId);
-        Task<ProfileSettingResponse> UploadProfilePicAsync(string userId, IFormFile file);
-        Task<ProfileSettingResponse> UploadCoverPicAsync(string userId, IFormFile file);
-        Task<ProfileSettingResponse> DeleteProfilePicAsync(string userId);
-        Task<ProfileSettingResponse> DeleteCoverPicAsync(string userId);
+        Task<BaseResponse> UpdateNameAsync(string userId,UpdateNameRequest request);
+        Task<BaseResponse> UpdateBioAsync(string userId,UpdateBioRequest request);
+        Task<BaseResponse> RemoveBioAsync(string userId);
+        Task<BaseResponse> UploadPictureAsync(string userId, IFormFile file, string pictureType);
+        Task<BaseResponse> DeletePictureAsync(string userId,string pictureType);
 
     }
 }

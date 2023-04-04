@@ -21,20 +21,15 @@ namespace SafariGo.Api.Controllers
 
         [HttpPost("register")]
 
-        public async Task<IActionResult> RegisterAsync(RegisterRequest request)
+        public async Task<IActionResult> RegisterAsync([FromBody]RegisterRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
             var result = await _auth.RegisterAsync(request);
             return result.Status ? Ok(result) : BadRequest(result);
         }
         [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync(LoginRequest request)
+        public async Task<IActionResult> LoginAsync([FromBody]LoginRequest request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+           
             var result = await _auth.LoginAsync(request);
             return result.Status ? Ok(result) : BadRequest(result);
         }
@@ -43,13 +38,12 @@ namespace SafariGo.Api.Controllers
 
         public async Task<IActionResult> ConfirmEmail([FromQuery] ConfirmEmailRequest request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            
             var result = await _auth.ConfirmEmail(request);
             return result.Status ? Ok(result) : BadRequest(result);
         }
         [HttpPost("forgetPassword")]
-        public async Task<IActionResult> ForgetPassword(string email)
+        public async Task<IActionResult> ForgetPassword([FromQuery]string email)
         {
             if (string.IsNullOrEmpty(email))
                 return BadRequest("The email address is requerd");
@@ -60,8 +54,7 @@ namespace SafariGo.Api.Controllers
         [HttpPost("resetPassword")]
         public async Task<IActionResult> ResetPasswordAsync([FromForm]ResetPasswordRequest request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+           
             var result = await _auth.ResetPassword(request);
 
             return result.Status ? Ok(result) : BadRequest(result);
