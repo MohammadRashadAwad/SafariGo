@@ -18,5 +18,7 @@ namespace SafariGo.Core.Dto.Request.CategoryItem
         public IFormFile Cover { get; set; }
         [Required]
         public string CategoryId { get; set; }
+        [Required]
+        public string Address { get; set; }
     }
 }

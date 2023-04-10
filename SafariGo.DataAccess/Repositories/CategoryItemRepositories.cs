@@ -36,6 +36,7 @@ namespace SafariGo.DataAccess.Repositories
                 Description = request.Description,
                 Cover = upload.Data.ToString(),
                 CategoryId = request.CategoryId,
+                Address = request.Address
 
             };
             await _context.CategoryItems.AddAsync(categoryItem);
@@ -56,7 +57,7 @@ namespace SafariGo.DataAccess.Repositories
 
         public async Task<BaseResponse> GetAllCategoryItem()
         {
-            var result = await _context.CategoryItems.Select(ci=>new {ci.Id,ci.Title,ci.Description,ci.Cover,ci.CreateAt}).ToListAsync();
+            var result = await _context.CategoryItems.Select(ci=>new {ci.Id,ci.Title,ci.Description,ci.Cover,ci.CreateAt,ci.Address}).ToListAsync();
             return new BaseResponse { Status = true, Data = result };
         }
 

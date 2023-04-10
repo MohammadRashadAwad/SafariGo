@@ -18,6 +18,7 @@ namespace SafariGo.Core.Models
         public DateTime CreateAt { get; set; }
         public string CategoryId { get; set; }
         public virtual Category Category { get; set; }
+        public string Address { get; set; }
         public CategoryItem()
         {
             Id = Guid.NewGuid().ToString();
