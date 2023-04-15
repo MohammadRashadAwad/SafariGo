@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SafariGo.DataAccess;
 
@@ -11,9 +12,11 @@ using SafariGo.DataAccess;
 namespace SafariGo.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230410230025_AddPostsTable")]
+    partial class AddPostsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -293,37 +296,6 @@ namespace SafariGo.DataAccess.Migrations
                     b.ToTable("CategoryItems");
                 });
 
-            modelBuilder.Entity("SafariGo.Core.Models.Comment", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CrateAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Image")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PostId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PostId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Comments");
-                });
-
             modelBuilder.Entity("SafariGo.Core.Models.Post", b =>
                 {
                     b.Property<string>("Id")
@@ -411,25 +383,6 @@ namespace SafariGo.DataAccess.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("SafariGo.Core.Models.Comment", b =>
-                {
-                    b.HasOne("SafariGo.Core.Models.Post", "Post")
-                        .WithMany("Comments")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SafariGo.Core.Models.ApplicationUser", "Users")
-                        .WithMany("Comments")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Post");
-
-                    b.Navigation("Users");
-                });
-
             modelBuilder.Entity("SafariGo.Core.Models.Post", b =>
                 {
                     b.HasOne("SafariGo.Core.Models.ApplicationUser", "Users")
@@ -443,19 +396,12 @@ namespace SafariGo.DataAccess.Migrations
 
             modelBuilder.Entity("SafariGo.Core.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("Comments");
-
                     b.Navigation("Posts");
                 });
 
             modelBuilder.Entity("SafariGo.Core.Models.Category", b =>
                 {
                     b.Navigation("CategoryItems");
-                });
-
-            modelBuilder.Entity("SafariGo.Core.Models.Post", b =>
-                {
-                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

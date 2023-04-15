@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,5 +21,11 @@ namespace SafariGo.Core.Models
         public string ? ProfilePic { get; set; }
         [MaxLength(256)]
         public string ? Bio { get; set; }
+
+        // Navigation property
+        [ForeignKey("UserId")]
+        public virtual ICollection<Post> Posts { get; set; }
+        [ForeignKey("UserId")]
+        public virtual ICollection<Comment> Comments { get; set; }
     }
 }

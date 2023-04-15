@@ -13,7 +13,6 @@ namespace SafariGo.Core.Dto.Request
         public string ? FirstName { get; set; }
         [StringLength(25, MinimumLength = 2)]
         public string ? LastName { get; set; }
-        [Required]
-        public string Password { get; set; }
+       
     }
 }

@@ -23,7 +23,7 @@ namespace SafariGo.DataAccess.Repositories
 {
     public class AuthRepositories : IAuthRepositories
     {
-
+        const string profilePicture = "https://cdn-icons-png.flaticon.com/512/727/727399.png?w=740&t=st=1681582391~exp=1681582991~hmac=0d2f003b929b86f5a0bee5120b5c97b0bc84db10b73f2dd6abe93d5d8a2295be";
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly JWT _jwt;
         private readonly IConfiguration _configuration;
@@ -81,14 +81,16 @@ namespace SafariGo.DataAccess.Repositories
             return new BaseResponse
             {
                 Status = true,
-                Data = new 
+                Data = new
                 {
                     IsAdmin = await _userManager.IsInRoleAsync(user, "Admin"),
                     Token = new JwtSecurityTokenHandler().WriteToken(await CreateAccessToken(user)),
                     UserId = user.Id,
-                    Name =$"{user.FirstName} {user.LastName}",
-                    Email=user.Email,
-                    ProfilePic = user.ProfilePic
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    ProfilePic = string.IsNullOrEmpty(user.ProfilePic) ? profilePicture : user.ProfilePic,
+                    Bio=user.Bio
                 },
                 Errors = null
             };

@@ -78,9 +78,6 @@ namespace SafariGo.DataAccess.Repositories
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 return new BaseResponse { Errors = new { UserId = "Invalid user id" } };
-
-            if (!await _userManager.CheckPasswordAsync(user, request.Password))
-                return new BaseResponse { Errors = new { Password = "Wrong password" } };
             if (!string.IsNullOrEmpty(request.FirstName))
                 user.FirstName = request.FirstName;
             if (!string.IsNullOrEmpty(request.LastName))
