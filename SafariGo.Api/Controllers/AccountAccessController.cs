@@ -55,5 +55,14 @@ namespace SafariGo.Api.Controllers
             return result.Status ? Ok(result) : BadRequest(result);
 
         }
+
+        [Authorize]
+        [HttpGet("profile/{userId}")]
+
+        public async Task<IActionResult> GetProfile(string userId)
+        {
+            var result = await _account.ProfileAsync(userId);
+            return result.Status ? Ok(result) : BadRequest(result.Message);
+        }
     }
 }

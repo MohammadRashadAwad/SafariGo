@@ -122,6 +122,7 @@ builder.Services.AddScoped<ICategoryRepositories, CategoryRepositories>();
 builder.Services.AddScoped<ICategoryItemRepositories, CategoryItemRepositories>();
 builder.Services.AddScoped<IMaillingService, MaillingService>();
 builder.Services.AddScoped<ICloudinaryServices, CloudinaryServices>();
+builder.Services.AddTransient<IPostsRepositories, PostsRepositories>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

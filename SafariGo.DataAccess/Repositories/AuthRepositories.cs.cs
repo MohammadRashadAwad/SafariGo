@@ -23,7 +23,7 @@ namespace SafariGo.DataAccess.Repositories
 {
     public class AuthRepositories : IAuthRepositories
     {
-        const string profilePicture = "https://cdn-icons-png.flaticon.com/512/727/727399.png?w=740&t=st=1681582391~exp=1681582991~hmac=0d2f003b929b86f5a0bee5120b5c97b0bc84db10b73f2dd6abe93d5d8a2295be";
+        const string defaultProfilePicture = "https://cdn-icons-png.flaticon.com/512/847/847969.png?w=740&t=st=1683038294~exp=1683038894~hmac=ff15f90aa346ed552d76f40cc8c100ccc3405550ac77655202761ba2dcaf3865";
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly JWT _jwt;
         private readonly IConfiguration _configuration;
@@ -89,7 +89,7 @@ namespace SafariGo.DataAccess.Repositories
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Email = user.Email,
-                    ProfilePic = string.IsNullOrEmpty(user.ProfilePic) ? profilePicture : user.ProfilePic,
+                    ProfilePic =user.ProfilePic ?? defaultProfilePicture,
                     Bio=user.Bio
                 },
                 Errors = null

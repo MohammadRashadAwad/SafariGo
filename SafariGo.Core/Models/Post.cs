@@ -18,6 +18,8 @@ namespace SafariGo.Core.Models
         public string UserId { get; set; }
         [ForeignKey("PostId")]
         public virtual ICollection<Comment> Comments { get; set; }
+        [ForeignKey("PostId")]
+        public virtual ICollection<Like> Likes { get; set; } 
         public Post()
         {
             Id = Guid.NewGuid().ToString();

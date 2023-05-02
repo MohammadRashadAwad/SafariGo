@@ -14,5 +14,6 @@ namespace SafariGo.Core.Repositories
         Task<BaseResponse> ConfirmChangeEmail(ConfirmChangeEmailRequest request);
         Task<BaseResponse> ChangePasswordAsync(string userId, ChangePasswordRequest request);
         Task<BaseResponse> ChangePhoneNumberAsync(string userId,ChangePhoneRequest request);
+        Task<BaseResponse> ProfileAsync(string userId);
     }
 }

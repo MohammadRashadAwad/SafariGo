@@ -27,5 +27,8 @@ namespace SafariGo.Core.Models
         public virtual ICollection<Post> Posts { get; set; }
         [ForeignKey("UserId")]
         public virtual ICollection<Comment> Comments { get; set; }
+        [ForeignKey("UserId")]
+
+        public virtual ICollection<Like> Likes { get; set; }
     }
 }
