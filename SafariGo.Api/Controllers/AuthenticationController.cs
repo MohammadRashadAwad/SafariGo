@@ -38,9 +38,11 @@ namespace SafariGo.Api.Controllers
 
         public async Task<IActionResult> ConfirmEmail([FromQuery] ConfirmEmailRequest request)
         {
+
             
             var result = await _auth.ConfirmEmail(request);
-            return result.Status ? Ok(result) : BadRequest(result);
+            
+            return result.Status ? Redirect("/successfully") : BadRequest(result);
         }
         [HttpPost("forgetPassword")]
         public async Task<IActionResult> ForgetPassword([FromQuery]string email)
@@ -57,7 +59,7 @@ namespace SafariGo.Api.Controllers
            
             var result = await _auth.ResetPassword(request);
 
-            return result.Status ? Ok(result) : BadRequest(result);
+            return result.Status ? Redirect("/passSuss") : BadRequest(result);
         }
     }
 }

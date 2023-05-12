@@ -32,7 +32,7 @@ namespace SafariGo.Api.Controllers
         {
            
             var result = await _account.ConfirmChangeEmail(request);
-            return result.Status ? Ok(result): BadRequest(result);
+            return result.Status ? Redirect("/successfully"): BadRequest(result);
         }
         [Authorize]
         [HttpPost("changePassword")]
@@ -62,7 +62,7 @@ namespace SafariGo.Api.Controllers
         public async Task<IActionResult> GetProfile(string userId)
         {
             var result = await _account.ProfileAsync(userId);
-            return result.Status ? Ok(result) : BadRequest(result.Message);
+            return result.Status ? Redirect("/passSuss") : BadRequest(result.Message);
         }
     }
 }

@@ -25,7 +25,6 @@ namespace SafariGo.DataAccess.Services
         {
             _settings = settings.Value;
             _cloudinary = new Cloudinary(new Account(_settings.CloudName, _settings.APIKey, _settings.APISecret));
-
         }
 
         public async Task<BaseResponse> DeleteResorceAsync(string url)
@@ -34,7 +33,6 @@ namespace SafariGo.DataAccess.Services
                 return new BaseResponse { Message = "The URL is Null or Empty" };
             var deleteResult = await _cloudinary.DeleteResourcesAsync(url.ExtractPublicIdOfImage());
             return new BaseResponse { Status = true, Message = "The image has been deleted successfully" };
-
         }
 
         public async Task<BaseResponse> UpdateAsync(string url, IFormFile file)
@@ -45,7 +43,6 @@ namespace SafariGo.DataAccess.Services
             var upload = await UploadAsync(file);
             if (!upload.Status)
                 return new BaseResponse { Message = upload.Message };
-
             return new BaseResponse
             {
                 Status = true,
@@ -60,8 +57,8 @@ namespace SafariGo.DataAccess.Services
                 return new BaseResponse { Message = "The File is requerd" };
 
 
-            if (!file.ContentType.StartsWith("image/"))
-                return new BaseResponse { Message = "We do not support this type of file" };
+            //if (!file.ContentType.StartsWith("image/"))
+            //    return new BaseResponse { Message = "We do not support this type of file" };
 
             var uploadParams = new ImageUploadParams
             {

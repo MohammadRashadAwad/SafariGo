@@ -73,6 +73,9 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
+
+
+
 builder.Services.AddRazorPages();
 builder.Services.AddCors();
 // Add EntityFramework //
@@ -91,6 +94,9 @@ builder.Services.AddAuthentication(option =>
     option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }
+
+
+
 
 ).AddJwtBearer(option =>
     {

@@ -159,15 +159,16 @@ namespace SafariGo.DataAccess.Repositories
 
 
         #region CreatAccessToken
+
+
+
         private async Task<JwtSecurityToken> CreateAccessToken(ApplicationUser user)
         {
             var userClaims = await _userManager.GetClaimsAsync(user); // null
             var roles = await _userManager.GetRolesAsync(user); // User
             var roleClaims = new List<Claim>();  // {roles :user}
-
             foreach (var role in roles)
                 roleClaims.Add(new Claim("roles", role));
-
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id), //userid
@@ -191,6 +192,8 @@ namespace SafariGo.DataAccess.Repositories
 
             return jwtSecurityToken;
         }
+
+
         #endregion
 
     }
