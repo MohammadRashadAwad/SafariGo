@@ -19,6 +19,7 @@ namespace SafariGo.Core.Models
         public string CategoryId { get; set; }
         public virtual Category Category { get; set; }
         public string Address { get; set; }
+        public string Map { get; set; }
         public CategoryItem()
         {
             Id = Guid.NewGuid().ToString();

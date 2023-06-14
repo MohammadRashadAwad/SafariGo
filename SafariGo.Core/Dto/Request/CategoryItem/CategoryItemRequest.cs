@@ -20,5 +20,7 @@ namespace SafariGo.Core.Dto.Request.CategoryItem
         public string CategoryId { get; set; }
         [Required]
         public string Address { get; set; }
+        [Required]
+        public string Map { get; set; }
     }
 }

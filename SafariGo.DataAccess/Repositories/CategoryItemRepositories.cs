@@ -36,7 +36,8 @@ namespace SafariGo.DataAccess.Repositories
                 Description = request.Description,
                 Cover = upload.Data.ToString(),
                 CategoryId = request.CategoryId,
-                Address = request.Address
+                Address = request.Address,
+                Map = request.Map
 
             };
             await _context.CategoryItems.AddAsync(categoryItem);
@@ -57,7 +58,7 @@ namespace SafariGo.DataAccess.Repositories
 
         public async Task<BaseResponse> GetAllCategoryItem()
         {
-            var result = await _context.CategoryItems.Select(ci=>new {ci.Id,ci.Title,ci.Description,ci.Cover,ci.CreateAt,ci.Address}).ToListAsync();
+            var result = await _context.CategoryItems.Select(ci=>new {ci.Id,ci.Title,ci.Description,ci.Cover,ci.CreateAt,ci.Address,ci.Map}).ToListAsync();
             return new BaseResponse { Status = true, Data = result };
         }
 
@@ -78,6 +79,7 @@ namespace SafariGo.DataAccess.Repositories
             categoryItem.Description = request.Description;
             categoryItem.Cover = update.Data.ToString();
             categoryItem.CategoryId = request.CategoryId;
+            categoryItem.Map = request.Map;
             _context.SaveChanges();
             return new BaseResponse { Status = true, Message = "The category item has been updated successfully" };
            

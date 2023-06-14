@@ -62,7 +62,7 @@ namespace SafariGo.Api.Controllers
         public async Task<IActionResult> GetProfile(string userId)
         {
             var result = await _account.ProfileAsync(userId);
-            return result.Status ? Redirect("/passSuss") : BadRequest(result.Message);
+            return result.Status ? Ok(result) : BadRequest(result.Message);
         }
     }
 }
