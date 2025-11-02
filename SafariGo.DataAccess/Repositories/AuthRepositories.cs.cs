@@ -99,10 +99,8 @@ namespace SafariGo.DataAccess.Repositories
 
         public async Task<BaseResponse> RegisterAsync(RegisterRequest request)
         {
-            // check the email is not exists in Database
             if (await _userManager.FindByEmailAsync(request.Email) != null)
                 return new BaseResponse { Errors = new { Email = "Someone already has this email address. Try another email" } };
-            // check the phone is not exists in Database
             if (await _userManager.FindByNameAsync(request.Phone) != null)
                 return new BaseResponse { Errors = new { Phone = "Someone already has this phone number. Try another phone number" } };
             var user = new ApplicationUser
@@ -118,9 +116,7 @@ namespace SafariGo.DataAccess.Repositories
                 return new BaseResponse { Errors = new { Password = result.Errors.Select(e => e.Description) } };
 
             await _userManager.AddToRoleAsync(user, "User");
-            // Generate Token to confirm email 
             var tokenConfirmEmail = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            // create Token not contains special characters
             var encodedToken = Encoding.UTF8.GetBytes(tokenConfirmEmail);
             var validToken = WebEncoders.Base64UrlEncode(encodedToken);
             var url = $"{_configuration["AppUrl"]}/api/Authentication/confirmEmail?userId={user.Id}&token={validToken}";
@@ -133,9 +129,7 @@ namespace SafariGo.DataAccess.Repositories
                     Token = new JwtSecurityTokenHandler().WriteToken(await CreateAccessToken(user)),
                     UserId = user.Id,
                     IsAdmin = await _userManager.IsInRoleAsync(user, "Admin")
-                },
-                Errors = null,
-
+                }
             };
 
 
